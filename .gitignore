@@ -1,0 +1,4 @@
+*.coproj
+*.comarker
+*.cogui
+.gitignore
