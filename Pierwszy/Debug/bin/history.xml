@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g -nostartfiles -Map=Pierwszy.map -O0 --gc-sections -LC:\CooCox\CoIDE\configuration\ProgramData\Pierwszy -TC:\CooCox\CoIDE\configuration\ProgramData\Pierwszy/arm-gcc-link.ld -g">
+      <target file="Pierwszy.elf" lastModified="1539a230d5b">
+         <source file="..\obj\startup_stm32f4xx.o" lastModified="1539a23084c"/>
+         <source file="..\obj\main.o" lastModified="1539a23090b"/>
+         <source file="..\obj\stm32f4xx_rcc.o" lastModified="1539a23098f"/>
+         <source file="..\obj\stm32f4xx_gpio.o" lastModified="1539a230a0b"/>
+         <source file="..\obj\system_stm32f4xx.o" lastModified="1539a230a60"/>
+         <source file="..\obj\stm32f4xx_spi.o" lastModified="1539a230acb"/>
+         <source file="..\obj\stm32f4_discovery_lis302dl.o" lastModified="1539a230b23"/>
+      </target>
+   </processor>
+</history>
