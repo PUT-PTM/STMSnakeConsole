@@ -5,6 +5,12 @@
 #include "stm32f4xx_gpio.h"
 #include "stm32f4_discovery_lis302dl.h"
 #include "stm32f4xx_rcc.h"
+#include "stm32f4xx_tim.h"
+#include "stm32f4xx_exti.h"
+#include "stm32f4xx_syscfg.h"
+#include "stm32f4xx_adc.h"
+#include "misc.h"
+
 
 
 int8_t acc_x,acc_y,acc_z;
@@ -13,10 +19,18 @@ int main(void) {
     //180MHz
     SystemInit();
 
+    SystemCoreClockUpdate();
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+
     /* GPIOD Periph clock enable */
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+
+
+
 
 
 
@@ -30,6 +44,23 @@ int main(void) {
    	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
    	GPIO_Init(GPIOD, &GPIO_InitStructure);
 
+   	//przycisk
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+
+    // stuktura timera
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    TIM_TimeBaseStructure.TIM_Period=3999;           //period 32 bitowy
+    TIM_TimeBaseStructure.TIM_Prescaler=20999;		//prescaler 16bitowy
+    TIM_TimeBaseStructure.TIM_ClockDivision =TIM_CKD_DIV1;
+    TIM_TimeBaseStructure.TIM_CounterMode =   TIM_CounterMode_Up;
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+    TIM_Cmd(TIM2, ENABLE);
 
    	//Akcelerometr
    	LIS302DL_InitTypeDef LIS302DL_InitStruct;
@@ -48,21 +79,43 @@ int main(void) {
     PCD8544_GotoXY(14, 3);
 
     //Print data with Pixel Set mode and Fontsize of 5x7px
-    PCD8544_Puts("STM32F429", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-    PCD8544_GotoXY(15, 13);
-    PCD8544_Puts("Discovery", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-    PCD8544_GotoXY(30, 26);
-    PCD8544_Puts("2014", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+    PCD8544_Puts("SNAKE", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+    PCD8544_GotoXY(10, 13);
+    PCD8544_Puts("Michal Suchorzynski", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
+    PCD8544_GotoXY(10, 26);
+    PCD8544_Puts("Paulina Kurpisz", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
 
-    PCD8544_GotoXY(45, 42);
-    //Put string with Pixel set mode and Fontsize of 3x5
-    PCD8544_Puts("majerle.eu", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
 
     //Display data on LCD
     PCD8544_Refresh();
    	unsigned int i;
    	int b=0;
-    for(;;)
+   	GPIO_ResetBits(GPIOD,GPIO_Pin_All);
+
+
+
+   	{
+   		if(TIM_GetFlagStatus(TIM2, TIM_FLAG_Update))
+   		{
+   			GPIO_SetBits(GPIOD,GPIO_Pin_14);
+   			TIM_ClearFlag(TIM2, TIM_FLAG_Update);
+   		}
+   		if(TIM2->CNT>2000)
+   		{
+   			GPIO_ResetBits(GPIOD,GPIO_Pin_All);
+   		}
+    	/*
+   		    	  Opis:
+   		    	  -TIM_GetFlagStatus(TIMER, TIM_FLAG_Update)  przepe³nienie timera
+   		    	  -za kazdym razem po TIM_GetFlagStatus(xx) trzeba daæ w warunku TIM_ClearFlag(TIMER, TIM_FLAG_Update);
+   		    	  -CNT aktualny period
+   		*/
+
+	}
+
+
+
+   	/*for(;;)
     {
     	for(int i = 0; i < 10000; i++) {}
    		LIS302DL_Read(&acc_x,LIS302DL_OUT_X_ADDR,1);
@@ -80,7 +133,7 @@ int main(void) {
     	else GPIO_ResetBits(GPIOD,GPIO_Pin_13);
     	if(os_y<-1) GPIO_SetBits(GPIOD,GPIO_Pin_15);
     	else GPIO_ResetBits(GPIOD,GPIO_Pin_15);
-
+    }*/
     /*		a=GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0);
     		for(int i=0;i<3000000;i++){}
 
@@ -107,4 +160,4 @@ int main(void) {
     		}*/
 
 
-}}
+}
