@@ -1,18 +1,6 @@
-#include "defines.h"
-#include "stm32f4xx.h"
-#include "tm_stm32f4_pcd8544.h"
-#include "stm32f4xx_conf.h"
-#include "stm32f4xx_gpio.h"
-#include "stm32f4_discovery_lis302dl.h"
-#include "stm32f4xx_rcc.h"
-#include "stm32f4xx_tim.h"
-#include "stm32f4xx_exti.h"
-#include "stm32f4xx_syscfg.h"
-#include "stm32f4xx_adc.h"
-#include "misc.h"
+#include"menu.h"
 
-
-
+// Ekran Startowy
 void start()
 {
 	PCD8544_GotoXY(14, 3);
@@ -23,16 +11,18 @@ void start()
 
 	PCD8544_Puts("Michal Suchorzynski", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
     PCD8544_Refresh();
+    int a=0;
     int b=0;
-    while(b==0)
+    // Oczekiwanie na przycisk
+    while(a==0)
     {
-    	b=przycisk(b);
+    	a=przycisk(b);
     }
     PCD8544_Clear();
     PCD8544_Refresh();
     menu();
 }
-
+// G³owne menu
 void menu()
 {
 	PCD8544_GotoXY(0,10);
@@ -47,30 +37,71 @@ void menu()
 
 	float a=0;
 	int b=10;
-	int b2;
-
-	while(1)
+	int button=0;
+	int x=0;
+	while(x==0)
 	{
+		// WskaŸnik w menu
 		PCD8544_GotoXY(0,b);
 		PCD8544_Puts("-->", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 		PCD8544_Refresh();
+
+		// Odczyt akcelerometru
+		a=akcelerometr_osx();
 		for(int i=0;i<30000000;i++){}
 
-		a=akcelerometr_osx();
-		if(a<-2 && b!=10)
+		// Wskaznik do góry
+		if(a<-1 && b!=10)
 		{
 			PCD8544_GotoXY(0,b);
 			PCD8544_Puts("   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 			b=b-10;
 			a=0;
 		}
-		if(a>2&& b!=40)
+		// Wska¿nik w dó³
+		if(a>1&& b!=40)
 		{
 			PCD8544_GotoXY(0,b);
 			PCD8544_Puts("   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 			b=b+10;
 			a=0;
 		}
+
 		a=0;
+		// Przejscie dalej
+		a= przycisk(a);
+		// Start
+		if(a==1 && b==10)
+		{
+			gra();
+			a=0;
+		}
+		// Rekord
+		if(a==1 && b==20)
+		{
+			rekord();
+			a=0;
+		}
+		// Opcje
+		if(a==1 && b==30)
+		{
+			opcje();
+			a=0;
+		}
+		// Wyjscie
+		if(a==1 && b==40)
+		{
+			PCD8544_Clear();
+			x=1;
+		}
 	}
 }
+
+// Rozpoczecie gry
+void gra(){}
+
+// Wywietlenie rekordu
+void rekord(){}
+
+//Zmiana ustawieñ
+void opcje(){}

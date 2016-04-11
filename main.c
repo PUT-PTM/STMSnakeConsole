@@ -11,12 +11,8 @@
 #include "stm32f4xx_adc.h"
 #include "misc.h"
 
-
-
-
-
-int main(void) {
-    //180MHz
+int main(void)
+{
     SystemInit();
     initDiody();
    	initPrzycisk();
@@ -25,7 +21,7 @@ int main(void) {
     start();
 
 
-   	GPIO_ResetBits(GPIOD,GPIO_Pin_All);
+   	//GPIO_ResetBits(GPIOD,GPIO_Pin_All);
 /*
 
 for(;;)
