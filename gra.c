@@ -1,3 +1,6 @@
+// waz.cpp : Defines the entry point for the console application.
+//
+
 #include "stdafx.h"
 #include <iostream>
 #include <conio.h>
@@ -7,7 +10,8 @@ using namespace std;
 bool gameover;
 const int width = 20;
 const int height = 20;
-int x, y, fruitX, fruitY, score, dir1;
+int x, y, fruitX, fruitY, score, dir1, ntail;
+int tailX[100], tailY[100];
 enum eDirection { STOP = 0, RIGHT, LEFT, UP, DOWN };
 eDirection dir;
 
@@ -44,11 +48,22 @@ void draw()
 			else if (i == fruitY&&j == fruitX)
 				cout << "F";
 			else
-				cout << " ";
+			{
+				bool print = false;
+				for (int k = 0; k < ntail; k++)
+				{
+					if (tailX[k] == j &&tailY[k] == i)
+					{
+						cout << "o";
+						print = true;
+					}
+				}
+				if (!print)
+					cout << " ";
+			}
 
 			if (j == width - 1)
 				cout << "#";
-
 		}
 		cout << endl;
 	}
@@ -87,6 +102,21 @@ void input()
 
 void logic()
 {
+	int prevX = tailX[0];
+	int prevY = tailY[0];
+	int prev2X, prev2Y;
+	tailX[0] = x;
+	tailY[0] = y;
+	for (int i = 1; i < ntail; i++)
+	{
+		prev2X = tailX[i];
+		prev2Y = tailY[i];
+		tailX[i] = prevX;
+		tailY[i] = prevY;
+		prevX = prev2X;
+		prevY = prev2Y;
+	}
+
 	switch (dir)
 	{
 	case LEFT:
@@ -107,12 +137,18 @@ void logic()
 	if (x > width || x<0 || y>height || y < 0)
 		gameover = true;
 
+	for (int i = 0; i < ntail; i++)
+	{
+		if (tailX[i] == x&&tailY[i] == y)
+			gameover = true;
+	}
+
 	if (x == fruitX && y == fruitY)
 	{
 		score = +10;
 		fruitX = rand() % width;
 		fruitY = rand() % height;
-
+		ntail++;
 	}
 }
 
@@ -121,11 +157,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	setup();
 	while (gameover != true)
 	{
-	
+
 		draw();
 		input();
 		logic();
-		Sleep(20);
+		Sleep(30);
 
 	}
 	return 0;
