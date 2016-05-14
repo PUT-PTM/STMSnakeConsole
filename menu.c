@@ -1,5 +1,7 @@
 #include"menu.h"
 
+
+
 int a=0;
 int b=10;
 
@@ -22,6 +24,7 @@ void TIM3_IRQHandler(void)
 		TIM_SetCounter(TIM3, 0);
     }
 }
+
 
 
 
@@ -63,14 +66,14 @@ void menu()
 		PCD8544_Puts("-->", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 		PCD8544_Refresh();
 
-		float c=0;
+		int c=0;
 		// Odczyt akcelerometru
 		if(TIM_GetFlagStatus(TIM2, TIM_FLAG_Update)) {
 			c=akcelerometr_osx();
 			TIM_ClearFlag(TIM2, TIM_FLAG_Update);
 		}
 		// Wskaznik do góry
-		if(c<-1 && b!=10)
+		if(c<-30 && b!=10)
 		{
 			PCD8544_GotoXY(0,b);
 			PCD8544_Puts("   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
@@ -78,7 +81,7 @@ void menu()
 			c=0;
 		}
 		// Wska¿nik w dó³
-		if(c>1&& b!=40)
+		if(c>30&& b!=40)
 		{
 			PCD8544_GotoXY(0,b);
 			PCD8544_Puts("   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
@@ -114,10 +117,33 @@ void menu()
 }
 
 // Rozpoczecie gry
-void gra(){}
+void gra(){
+	setup();
+	draw();
+}
 
 // Wywietlenie rekordu
-void rekord(){}
+void rekord()
+{
+	PCD8544_Clear();
+	PCD8544_GotoXY(10, 14);
+	PCD8544_Puts("Twoj najlepszy wynik: ", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
+	PCD8544_Refresh();
+	while(a==0)
+	{
+	}
+	a=0;
+}
 
 //Zmiana ustawieñ
-void opcje(){}
+void opcje()
+{
+	PCD8544_Clear();
+	PCD8544_GotoXY(3, 5);
+	PCD8544_Puts("Zmien poziom trudnosci: ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+	PCD8544_Refresh();
+	while(a==0)
+	{
+	}
+	a=0;
+}

@@ -14,6 +14,7 @@
 
 int main(void)
 {
+
     SystemInit();
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
     initDiody();
@@ -22,6 +23,7 @@ int main(void)
    	initAkcelerometr();
     PCD8544_Init(0x38);
     start();
+    menu();
 
 
 
