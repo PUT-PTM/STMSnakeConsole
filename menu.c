@@ -1,5 +1,8 @@
 #include"menu.h"
 
+int a=0;
+int b=10;
+
 // Ekran Startowy
 void start()
 {
@@ -8,16 +11,12 @@ void start()
     PCD8544_GotoXY(10, 14);
     PCD8544_Puts("Paulina Kurpisz", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
 	PCD8544_GotoXY(10, 27);
-
 	PCD8544_Puts("Michal Suchorzynski", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
     PCD8544_Refresh();
-    int a=0;
-    int b=0;
-    // Oczekiwanie na przycisk
+     // Oczekiwanie na przycisk
     while(a==0)
-    {
-    	a=przycisk(b);
-    }
+    {}
+    a=0;
     PCD8544_Clear();
     PCD8544_Refresh();
     menu();
@@ -25,83 +24,169 @@ void start()
 // G³owne menu
 void menu()
 {
-	PCD8544_GotoXY(0,10);
-	PCD8544_Puts("    START", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_GotoXY(0,20);
-	PCD8544_Puts("    REKORD", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_GotoXY(0,30);
-	PCD8544_Puts("    OPCJE", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_GotoXY(0,40);
-	PCD8544_Puts("    ZAKONCZ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_Refresh();
+	TIM_Cmd(TIM2, ENABLE);
 
-	float a=0;
-	int b=10;
-	int button=0;
-	int x=0;
-	while(x==0)
+	while(1)
 	{
+		PCD8544_GotoXY(0,10);
+		PCD8544_Puts("    START", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+		PCD8544_GotoXY(0,20);
+		PCD8544_Puts("    REKORD", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+		PCD8544_GotoXY(0,30);
+		PCD8544_Puts("    OPCJE", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+		PCD8544_GotoXY(0,40);
+		PCD8544_Puts("    ZAKONCZ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+		PCD8544_Refresh();
 		// WskaŸnik w menu
 		PCD8544_GotoXY(0,b);
 		PCD8544_Puts("-->", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 		PCD8544_Refresh();
 
+		int8_t c=0;
 		// Odczyt akcelerometru
-		a=akcelerometr_osx();
-		for(int i=0;i<30000000;i++){}
-
+		if(TIM_GetFlagStatus(TIM2, TIM_FLAG_Update)) {
+			c=akcelerometr_osx();
+			TIM_ClearFlag(TIM2, TIM_FLAG_Update);
+		}
 		// Wskaznik do góry
-		if(a<-1 && b!=10)
+		if(c<-10 && b!=10)
 		{
 			PCD8544_GotoXY(0,b);
 			PCD8544_Puts("   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 			b=b-10;
-			a=0;
+			c=0;
 		}
 		// Wska¿nik w dó³
-		if(a>1&& b!=40)
+		if(c>10&& b!=40)
 		{
 			PCD8544_GotoXY(0,b);
 			PCD8544_Puts("   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 			b=b+10;
-			a=0;
+			c=0;
 		}
-
-		a=0;
-		// Przejscie dalej
-		a= przycisk(a);
-		// Start
 		if(a==1 && b==10)
 		{
 			gra();
-			a=0;
+		    a=0;
 		}
 		// Rekord
 		if(a==1 && b==20)
 		{
 			rekord();
-			a=0;
+		    a=0;
 		}
 		// Opcje
-		if(a==1 && b==30)
-		{
-			opcje();
-			a=0;
+    	if(a==1 && b==30)
+    	{
+    		opcje();
+    		a=0;
+    	}
+    	// Wyjscie
+    	if(a==1 && b==40)
+    	{
+    		PCD8544_Clear();
+    		a=0;
+    		return;
 		}
-		// Wyjscie
-		if(a==1 && b==40)
-		{
-			PCD8544_Clear();
-			x=1;
-		}
+
 	}
 }
 
 // Rozpoczecie gry
-void gra(){}
+void gra(){
+	PCD8544_Clear();
+	TIM_Cmd(TIM3, DISABLE);
+	TIM_Cmd(TIM4, ENABLE);
+	setup();
+	int status_gry=0;
+	int os_x=0;
+	int os_y=0;
+	int kier=0;
+	while(status_gry==0)
+	{
+		if(TIM_GetFlagStatus(TIM4, TIM_FLAG_Update))
+		{
+			os_x=akcelerometr_osx();
+			os_y=akcelerometr_osy();
+			if(os_x<-10)
+			{
+				kier=2;
+				os_y=0;
+
+			}
+			if(os_x>10)
+			{
+				kier=1;
+				os_y=0;
+			}
+			if(os_y<-10)
+			{
+				kier=4;
+				os_x=0;
+			}
+			if(os_y>10)
+			{
+				kier=3;
+				os_x=0;
+			}
+			status_gry=logic(kier);
+
+
+			TIM_ClearFlag(TIM4, TIM_FLAG_Update);
+		}
+		draw();
+
+	}
+
+	PCD8544_Clear();
+	PCD8544_Refresh();
+}
 
 // Wywietlenie rekordu
-void rekord(){}
+void rekord()
+{
+	PCD8544_Clear();
+	PCD8544_GotoXY(10, 14);
+	PCD8544_Puts("Twoj najlepszy wynik: ", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
+	PCD8544_Refresh();
+	while(a==0)
+	{
+	}
+	a=0;
+}
 
 //Zmiana ustawieñ
-void opcje(){}
+void opcje()
+{
+	PCD8544_Clear();
+	PCD8544_GotoXY(3, 5);
+	PCD8544_Puts("Zmien poziom trudnosci: ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+	PCD8544_Refresh();
+	while(a==0)
+	{
+	}
+	a=0;
+}
+
+
+
+
+void EXTI1_IRQHandler(void)
+{
+	TIM_Cmd(TIM3, ENABLE);
+}
+void TIM3_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+    {
+		if(EXTI_GetITStatus(EXTI_Line1) != RESET)
+		{
+		    a=1;
+		    EXTI_ClearITPendingBit(EXTI_Line1);
+	   }
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		TIM_Cmd(TIM3, DISABLE);
+		TIM_SetCounter(TIM3, 0);
+    }
+}
+
