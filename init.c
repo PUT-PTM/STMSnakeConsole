@@ -42,7 +42,6 @@ void initDiody()
 
 void initAkcelerometr()
 {
-<<<<<<< HEAD
 	LIS302DL_InitTypeDef AccInitStr;
 	AccInitStr.Axes_Enable = LIS302DL_XYZ_ENABLE;
 	AccInitStr.Full_Scale = LIS302DL_FULLSCALE_2_3;
@@ -50,15 +49,6 @@ void initAkcelerometr()
 	AccInitStr.Output_DataRate = LIS302DL_DATARATE_100;
 	AccInitStr.Self_Test = LIS302DL_SELFTEST_NORMAL;
 	LIS302DL_Init(&AccInitStr);
-=======
-	LIS302DL_InitTypeDef LIS302DL_InitStruct;
-	LIS302DL_InitStruct.Power_Mode=LIS302DL_LOWPOWERMODE_ACTIVE;
-	LIS302DL_InitStruct.Output_DataRate=LIS302DL_DATARATE_100;
-	LIS302DL_InitStruct.Axes_Enable=LIS302DL_XYZ_ENABLE;
-	LIS302DL_InitStruct.Full_Scale=LIS302DL_FULLSCALE_2_3;
-	LIS302DL_InitStruct.Self_Test = LIS302DL_SELFTEST_NORMAL;
-	LIS302DL_Init(&LIS302DL_InitStruct);
->>>>>>> origin/master
 }
 void initTimer()
 {
@@ -70,30 +60,9 @@ void initTimer()
     TIM_TimeBaseStructure.TIM_ClockDivision =TIM_CKD_DIV1;
     TIM_TimeBaseStructure.TIM_CounterMode =   TIM_CounterMode_Up;
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-<<<<<<< HEAD
-=======
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-       TIM_TimeBaseStructure.TIM_Period= 1679;            //period 32 bitowy
-    TIM_TimeBaseStructure.TIM_Prescaler=9999;		//prescaler 16bitowy
-    TIM_TimeBaseStructure.TIM_ClockDivision =TIM_CKD_DIV1;
-    TIM_TimeBaseStructure.TIM_CounterMode =   TIM_CounterMode_Up;
-    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-    //TIM_Cmd(TIM3, ENABLE);
-
-    NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-    TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-
->>>>>>> origin/master
-
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-       TIM_TimeBaseStructure.TIM_Period= 1679;            //period 32 bitowy
+    TIM_TimeBaseStructure.TIM_Period= 1679;            //period 32 bitowy
     TIM_TimeBaseStructure.TIM_Prescaler=9999;		//prescaler 16bitowy
     TIM_TimeBaseStructure.TIM_ClockDivision =TIM_CKD_DIV1;
     TIM_TimeBaseStructure.TIM_CounterMode =   TIM_CounterMode_Up;
@@ -110,7 +79,7 @@ void initTimer()
     TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-    TIM_TimeBaseStructure.TIM_Period=6719;           //period 32 bitowy
+    TIM_TimeBaseStructure.TIM_Period=2000;           //period 32 bitowy
     TIM_TimeBaseStructure.TIM_Prescaler=9999;		//prescaler 16bitowy
     TIM_TimeBaseStructure.TIM_ClockDivision =TIM_CKD_DIV1;
     TIM_TimeBaseStructure.TIM_CounterMode =   TIM_CounterMode_Up;

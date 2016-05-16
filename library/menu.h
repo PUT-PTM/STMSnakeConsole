@@ -13,6 +13,8 @@
 
 
 
+
+int a;
 void start();
 void menu();
 void gra();
