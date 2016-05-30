@@ -15,64 +15,81 @@
 
 
 int gameover;// 0 - false 1-true
-int x, y, fruitX, fruitY, score, dir1, ntail;
+int head_x, head_y, fruitX, fruitY, score, dir1, ntail;
 int tailX[100], tailY[100];
 //int Direction { STOP = 0, RIGHT, LEFT, UP, DOWN };
 int dir; // STOP = 0, RIGHT = 1, LEFT = 2, UP = 3, DOWN = 4
 
-const int gorna_sciana=4;
-const int dolna_sciana=34;
-const int lewa_sciana=0;
-const int prawa_sciana=78;
+const int gorna_sciana=5;
+const int dolna_sciana=35;
+const int lewa_sciana=5;
+const int prawa_sciana=79;
+
+void draw_snake()
+{
+	// head
+	int i;
+	for(i=head_x;i>head_x-3;i--)
+	{
+		int j;
+		for(j=head_y;j>head_y-3;j-- )
+		{
+		PCD8544_DrawPixel(i, j, PCD8544_Pixel_Set);
+		}
+	}
+	//tail
+	int k;
+	for(k=0;k<ntail;k++)
+	{
+		for(i=tailX[k];i>tailX[k]-3;i--)
+		{
+				int j;
+				for(j=tailY[k];j>tailY[k]-3;j-- )
+				{
+				PCD8544_DrawPixel(i, j, PCD8544_Pixel_Set);
+				}
+		}
+	}
+}
+
+void draw_apple()
+{
+	int i;
+	for(i=fruitX;i>fruitX-3;i--)
+	{
+		int j;
+		for(j=fruitY;j>fruitY-3;j-- )
+		{
+			PCD8544_DrawPixel(i, j, PCD8544_Pixel_Set);
+		}
+	}
+	PCD8544_DrawPixel(fruitX-1, fruitY-3, PCD8544_Pixel_Set);
+}
+void Draw_score()
+{
+
+
+}
 
 void draw()
 {
 	int i;
 	for(i=lewa_sciana; i<=prawa_sciana; i++)
 	{
-		PCD8544_GotoXY(i, 0);
-		PCD8544_Puts("_",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
+		PCD8544_DrawPixel(i, gorna_sciana,PCD8544_Pixel_Set);
+		PCD8544_DrawPixel(i, dolna_sciana,PCD8544_Pixel_Set);
 	}
-	for(i=gorna_sciana; i<=dolna_sciana+1; i++)
+
+	for(i=gorna_sciana; i<=dolna_sciana; i++)
 	{
-		PCD8544_GotoXY(0, i);
-		PCD8544_Puts("|",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-		PCD8544_GotoXY(80, i);
-		PCD8544_Puts("|",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
+		PCD8544_DrawPixel(lewa_sciana, i,PCD8544_Pixel_Set);
+		PCD8544_DrawPixel(prawa_sciana, i,PCD8544_Pixel_Set);
 	}
-	for(i=lewa_sciana+1; i<=prawa_sciana-1; i++)
-	{
-		PCD8544_GotoXY(i, 35);
-		PCD8544_Puts("_",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-	}
-	PCD8544_GotoXY(10,41);
-	PCD8544_Puts("WYNIK:",PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	int j;
-	for(i=0;i<prawa_sciana;i++)
-	{
-		for(j=0;j<dolna_sciana+1;j++)
-		{
-			if(x==i&&y==j)
-			{
-				PCD8544_GotoXY(i, j);
-				PCD8544_Puts("X",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-			}
-			if(fruitX==i&&fruitY==j)
-			{
-				PCD8544_GotoXY(i, j);
-				PCD8544_Puts("f",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-			}
-			int k;
-			for(k=0;k<100;k++)
-			{
-				if(tailX[k]==i&&tailY[k]==j)
-				{
-					PCD8544_GotoXY(i, j);
-					PCD8544_Puts("o",PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-				}
-			}
-		}
-	}
+	draw_snake();
+	draw_apple();
+
+	PCD8544_GotoXY(10,38);
+	PCD8544_Puts("WYNIK: ",PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 	PCD8544_Refresh();
 
 }
@@ -80,10 +97,11 @@ void draw()
 
 void setup()
 {
+	ntail=0;
 	gameover = 0;
 	dir = 1;
-	x = 15;
-	y = 15;
+	head_x = 15;
+	head_y = 15;
 	fruitX = 22;
 	fruitY = 22;
 	score = 0;
@@ -91,11 +109,60 @@ void setup()
 
 int logic(int kierunek)
 {
+	dir=kierunek;
+	switch (dir)
+	{
+	case 2:
+		head_x--;
+		break;
+	case 1:
+		head_x++;
+		break;
+	case 3:
+		head_y--;
+		break;
+	case 4:
+		head_y++;
+	default:
+		break;
+	}
+	int i;
+	for(i=head_x;i>head_x-3;i--)
+	{
+		if (i >= prawa_sciana || i<= lewa_sciana)
+				gameover = 1;
+		int j;
+		for(j=head_y;j>head_y-3;j-- )
+		{
+			if (j >= dolna_sciana || j <= gorna_sciana)
+					gameover = 1;
+			}
+	}
+	for (int i = 0; i < ntail; i++)
+	{
+		if (tailX[i] == head_x&&tailY[i] == head_y)
+			gameover = 1;
+	}
+
+	for(i=head_x;i>head_x-3;i--)
+	{
+		int j;
+		for(j=head_y;j>head_y-3;j-- )
+		{
+			if(i==fruitX&&j==fruitY)
+			{
+				fruitX = (rand() % prawa_sciana-6)+6;
+				fruitY = (rand() % dolna_sciana-6)+6;
+				score+=1;
+				ntail++;
+			}
+		}
+	}
 	int prevX = tailX[0];
 	int prevY = tailY[0];
 	int prev2X, prev2Y;
-	tailX[0] = x;
-	tailY[0] = y;
+	tailX[0] = head_x;
+	tailY[0] = head_y;
 	for (int i = 1; i < ntail; i++)
 	{
 		prev2X = tailX[i];
@@ -104,41 +171,6 @@ int logic(int kierunek)
 		tailY[i] = prevY;
 		prevX = prev2X;
 		prevY = prev2Y;
-	}
-
-	dir=kierunek;
-	switch (dir)
-	{
-	case 2:
-		x--;
-		break;
-	case 1:
-		x++;
-		break;
-	case 3:
-		y--;
-		break;
-	case 4:
-		y++;
-	default:
-		break;
-	}
-
-	if (x > prawa_sciana || x<lewa_sciana || y>dolna_sciana || y < gorna_sciana)
-		gameover = 1;
-
-	for (int i = 0; i < ntail; i++)
-	{
-		if (tailX[i] == x&&tailY[i] == y)
-			gameover = 1;
-	}
-
-	if (x == fruitX && y == fruitY)
-	{
-		score = +10;
-		//fruitX = rand() % width;
-		//fruitY = rand() % height;
-		ntail++;
 	}
 	if(gameover==1)
 	{

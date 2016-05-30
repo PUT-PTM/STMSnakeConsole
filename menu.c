@@ -28,6 +28,7 @@ void menu()
 
 	while(1)
 	{
+
 		PCD8544_GotoXY(0,10);
 		PCD8544_Puts("    START", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 		PCD8544_GotoXY(0,20);
@@ -36,10 +37,12 @@ void menu()
 		PCD8544_Puts("    OPCJE", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 		PCD8544_GotoXY(0,40);
 		PCD8544_Puts("    ZAKONCZ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-		PCD8544_Refresh();
+
 		// WskaŸnik w menu
+
 		PCD8544_GotoXY(0,b);
 		PCD8544_Puts("-->", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+
 		PCD8544_Refresh();
 
 		int8_t c=0;
@@ -72,12 +75,18 @@ void menu()
 		// Rekord
 		if(a==1 && b==20)
 		{
+
+		    PCD8544_Clear();
+		    PCD8544_Refresh();
 			rekord();
 		    a=0;
 		}
 		// Opcje
     	if(a==1 && b==30)
     	{
+
+    	    PCD8544_Clear();
+    	    PCD8544_Refresh();
     		opcje();
     		a=0;
     	}
@@ -154,6 +163,9 @@ void rekord()
 	{
 	}
 	a=0;
+
+    PCD8544_Clear();
+    PCD8544_Refresh();
 }
 
 //Zmiana ustawieñ
@@ -167,6 +179,9 @@ void opcje()
 	{
 	}
 	a=0;
+
+    PCD8544_Clear();
+    PCD8544_Refresh();
 }
 
 

@@ -53,3 +53,4 @@ void TIM3_IRQHandler(void)
 		TIM_SetCounter(TIM3, 0);
     }
 }
+

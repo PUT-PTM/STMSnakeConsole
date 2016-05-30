@@ -12,21 +12,11 @@
 #include "misc.h"
 
 
-int main(void)
-{
-
-    SystemInit();
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-    initDiody();
-   	initPrzycisk();
-   	initTimer();
-   	initAkcelerometr();
-    PCD8544_Init(0x38);
-    //start();
-    menu();
 
 
-
-
-
-}
+int a;
+void start();
+void menu();
+void gra();
+void opcje();
+void rekord();
