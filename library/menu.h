@@ -12,10 +12,11 @@
 #include "misc.h"
 
 
-
-
-int a;
-void start();
+int status_gry;
+int os_x;
+int os_y;
+int kier;
+int the_best;
 void menu();
 void gra();
 void opcje();

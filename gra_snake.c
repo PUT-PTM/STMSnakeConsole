@@ -65,9 +65,14 @@ void draw_apple()
 	}
 	PCD8544_DrawPixel(fruitX-1, fruitY-3, PCD8544_Pixel_Set);
 }
-void Draw_score()
+void draw_score()
 {
 
+	char buffor[8];
+	itoa(score,buffor,9);
+	PCD8544_GotoXY(10,38);
+	PCD8544_Puts("WYNIK: ",PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+	PCD8544_Puts(buffor ,PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 
 }
 
@@ -88,8 +93,8 @@ void draw()
 	draw_snake();
 	draw_apple();
 
-	PCD8544_GotoXY(10,38);
-	PCD8544_Puts("WYNIK: ",PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+	draw_score();
+
 	PCD8544_Refresh();
 
 }
@@ -151,8 +156,8 @@ int logic(int kierunek)
 		{
 			if(i==fruitX&&j==fruitY)
 			{
-				fruitX = (rand() % prawa_sciana-6)+6;
-				fruitY = (rand() % dolna_sciana-6)+6;
+				fruitX = (rand() % (prawa_sciana-8))+8;
+				fruitY = (rand() % (dolna_sciana-8))+8;
 				score+=1;
 				ntail++;
 			}
@@ -174,6 +179,10 @@ int logic(int kierunek)
 	}
 	if(gameover==1)
 	{
+		if(score>the_best)
+		{
+			the_best=score;
+		}
 		return 1;
 	}
 	else return 0;

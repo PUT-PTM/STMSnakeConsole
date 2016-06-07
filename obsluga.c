@@ -34,23 +34,74 @@ int akcelerometr_osz()
 	return acc_z; // os z
 }
 
-
-void EXTI1_IRQHandler(void)
+void TIM2_IRQHandler(void)
 {
-	TIM_Cmd(TIM3, ENABLE);
-}
-void TIM3_IRQHandler(void)
-{
-	if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
-		if(EXTI_GetITStatus(EXTI_Line1) != RESET)
+		os_x=akcelerometr_osx();
+		os_y=akcelerometr_osy();
+		if(os_x<-10)
 		{
-		    a=1;
-		    EXTI_ClearITPendingBit(EXTI_Line1);
-	   }
-		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-		TIM_Cmd(TIM3, DISABLE);
-		TIM_SetCounter(TIM3, 0);
+			kier=2;
+		}
+		if(os_x>10)
+		{
+			kier=1;
+		}
+		if(os_y<-10)
+		{
+			kier=4;
+		}
+		if(os_y>10)
+		{
+			kier=3;
+		}
     }
+	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 }
+
+
+
+void TIM4_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
+    {
+		int lastkier=kier;
+		os_x=akcelerometr_osx();
+		os_y=akcelerometr_osy();
+		if(os_x<-10)
+		{
+			kier=2;
+			if(lastkier==1)
+			kier=1;
+			os_y=0;
+		}
+		if(os_x>10)
+		{
+				kier=1;
+				if(lastkier==2)
+					kier=2;
+					os_y=0;
+		}
+		if(os_y<-10)
+		{
+			kier=4;
+			if(lastkier==3)
+			kier=3;
+			os_x=0;
+		}
+		if(os_y>10)
+		{
+			kier=3;
+			if(lastkier==4)
+			kier=4;
+			os_x=0;
+		}
+		status_gry=logic(kier);
+		PCD8544_Clear();
+		draw();
+    }
+	TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+}
+
 

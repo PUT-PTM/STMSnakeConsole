@@ -22,7 +22,6 @@ int main(void)
    	initTimer();
    	initAkcelerometr();
     PCD8544_Init(0x38);
-    //start();
     menu();
 
 
