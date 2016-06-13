@@ -1,7 +1,8 @@
-#Overview -
-Is a tradicional game called snake.  We control our snake by an accelerometer from STM32 Discovery board. 
 #STM SNAKE CONSOLE
 ~~~~~~~~~~~~~~~~~~
+
+#Overview -
+Is a tradicional game called snake.  We control our snake by an accelerometer from STM32 Discovery board. 
 
 #Description - 
 This project consists of two main parts: STM32 project and Nokia 3310/5110 LCD For for displaying game.
