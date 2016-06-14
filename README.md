@@ -1,5 +1,4 @@
 # STMSnakeConsole 
-~~~~~~~~~~~~~~~~~
 
 #Overview -
 Is a tradicional game called snake.  We control our snake by an accelerometer from STM32 Discovery board. 
